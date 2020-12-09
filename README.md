@@ -79,9 +79,9 @@
 
 ## 线上版本
 
-<!-- ![](./doc/images/formal.jpg) -->
+<!-- ![](./doc/images/formal.png) -->
 SHOU小流浪图鉴  小程序二维码
-<img src="./doc/images/formal.jpg" width="400px"/>
+<img src="./doc/images/formal.png" width="400px"/>
 
 
 ## 部署教程
