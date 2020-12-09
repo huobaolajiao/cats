@@ -12,15 +12,44 @@ class PostsService extends BaseService {
    * @param {*} data
    * @param {*} context
    */
-  async list (data, context) {
+  async list(data, context) {
     const { pageIndex, pageSize } = data
     let collection = global.db.collection('posts')
 
-    const where = {
-      openId: context.OPENID,
-      isHide: global._.neq(true),
-      isDelete: global._.neq(true)
+    const myUserInfo = await global.db.collection('users')
+      .where({ openId: context.OPENID })
+      .field({
+        openId: true,
+        level: true,
+        isAdmin: true
+      })
+      .get()
+      .then(myUserInfo => { return myUserInfo.data.length > 0 ? myUserInfo.data[0] : 0 })
+      .catch(() => { return 0 })
+    const userLevel = myUserInfo.level
+    var where = {}
+    if (userLevel == 5) {
+      where = {
+        isHide: global._.neq(true),
+        isDelete: global._.neq(true),
+      }
+    }//level为5,能看到所有工单post的猫咪
+    else if (userLevel == 3) {
+      where = {
+        isHide: global._.neq(true),
+        isDelete: global._.neq(true),
+        status: 1
+      }
+    }//level为3,能看到所有审核通过的线上猫咪
+    else {
+      where = {
+        openId: context.OPENID,
+        isHide: global._.neq(true),
+        isDelete: global._.neq(true)
+      }
+      //level为0，普通用户只能看到自己的上报记录
     }
+
 
     if (pageSize && pageSize !== -1) {
       collection = collection
@@ -60,7 +89,7 @@ class PostsService extends BaseService {
    * 查询上报详细
    * @param {*} data
    */
-  async detail (data) {
+  async detail(data) {
     const { id } = data
     const collection = global.db.collection('posts')
     const result = await collection
@@ -77,7 +106,7 @@ class PostsService extends BaseService {
    * @param {*} data
    * @param {*} context
    */
-  async create (data, context) {
+  async create(data, context) {
     const { avatar, cover, photos } = data
 
     // 保存头像
@@ -109,7 +138,7 @@ class PostsService extends BaseService {
    * 更新猫咪
    * @param {*} data
    */
-  async update (data) {
+  async update(data) {
     const { id, avatar, cover, photos } = data
     delete data.id
 
@@ -144,7 +173,7 @@ class PostsService extends BaseService {
    * 删除文件
    * @param {*} data
    */
-  async deleteFile (data) {
+  async deleteFile(data) {
     const { fileId } = data
     const result = await global.cloud.deleteFile({
       fileList: [fileId]
@@ -156,7 +185,7 @@ class PostsService extends BaseService {
    * 获取待审核列表
    * @param {*} data
    */
-  async checkList (data) {
+  async checkList(data) {
     const { pageIndex, pageSize } = data
     let collection = global.db.collection('posts')
     const where = {
@@ -201,7 +230,7 @@ class PostsService extends BaseService {
    * 审核上报的信息
    * @param {*} data
    */
-  async check (data) {
+  async check(data) {
     const { id, action } = data
     const collection = global.db.collection('posts')
 
@@ -246,7 +275,7 @@ class PostsService extends BaseService {
    * @param {*} url
    * @param {*} cloudPath
    */
-  async saveFile (url, cloudPath) {
+  async saveFile(url, cloudPath) {
     if (url.indexOf('cloud://') !== -1) {
       return url
     }
@@ -262,7 +291,7 @@ class PostsService extends BaseService {
    * 保存照片列表
    * @param {*} photos
    */
-  async savaPhotos (photos) {
+  async savaPhotos(photos) {
     const cloudPhotos = []
     if (photos.length > 0) {
       await this.savaPhoto(photos, 0, cloudPhotos)
@@ -276,7 +305,7 @@ class PostsService extends BaseService {
    * @param {*} index
    * @param {*} cloudPhotos
    */
-  async savaPhoto (photos, index, cloudPhotos) {
+  async savaPhoto(photos, index, cloudPhotos) {
     cloudPhotos.push(await this.saveFile(photos[index], `cats/photos/${uuidv4()}.jpg`))
     if (photos.length > index + 1) {
       await this.savaPhoto(photos, index + 1, cloudPhotos)
@@ -287,7 +316,7 @@ class PostsService extends BaseService {
    * 处理猫咪信息
    * @param {*} post
    */
-  async handleCat (post) {
+  async handleCat(post) {
     const collection = global.db.collection('cats')
 
     // 猫咪信息
@@ -336,7 +365,7 @@ class PostsService extends BaseService {
    * @param {*} id
    * @param {*} name
    */
-  async sendSubscribeMessage (status, openId, id, name) {
+  async sendSubscribeMessage(status, openId, id, name) {
     // 推送订阅消息
     await global.cloud.openapi.subscribeMessage.send({
       touser: openId,

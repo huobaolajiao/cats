@@ -13,23 +13,30 @@ export default new Vuex.Store({
     userInfo: undefined,
     catTypes: [],
     scienceTypes: [],
+    footprintTypes: [],
     tools: [
       {
         icon: 'admin',
+        title: '上报浏览',
+        levels: [5],
+        page: '/pages/footprints-manage/footprints-manage'
+      },
+      {
+        icon: 'admin',
         title: '猫咪审核',
-        levels: [3],
+        levels: [3, 5],
         page: '/pages/cats-check/cats-check'
       },
       {
         icon: 'add-cat',
         title: '上报猫咪',
-        levels: [0, 1, 2, 3],
+        levels: [0, 1, 2, 3, 5],
         page: '/pages/add-cat/add-cat'
       },
       {
         icon: 'cats-manage',
         title: '我的上报',
-        levels: [0, 1, 2, 3],
+        levels: [0, 1, 2, 3, 5],
         page: '/pages/cats-manage/cats-manage'
       }
     ]
@@ -95,6 +102,9 @@ export default new Vuex.Store({
      */
     setScienceTypes (state, types) {
       state.scienceTypes = types
+    },
+    setFootprintTypes (state, types) {
+      state.footprintTypes = types
     }
   },
   actions: {

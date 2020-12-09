@@ -52,6 +52,9 @@ export default class Home extends Mixins(Share) {
     return this.$store.state.catTypes
   }
 
+  get footprintTypes () {
+    return this.$store.state.footprintTypes
+  }
   created () {
     // 设置初始标签
     this.current = 0

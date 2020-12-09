@@ -13,6 +13,33 @@
       "path": "pages/about/about"
     },
     {
+      "path": "pages/add-footprint/add-footprint",
+      "style": {
+        "navigationBarTitleText": "上报猫咪",
+        "navigationStyle": "default",
+        "backgroundColor": "#F7F2EE",
+        "navigationBarBackgroundColor": "#F7F2EE"
+      }
+    },
+    {
+      "path": "pages/footprints-manage/footprints-manage",
+      "style": {
+        "navigationBarTitleText": "上报情况浏览",
+        "navigationStyle": "default",
+        "backgroundColor": "#F7F2EE",
+        "navigationBarBackgroundColor": "#F7F2EE"
+      }
+    },
+    {
+      "path": "pages/footprint-detail/footprint-detail",
+      "style": {
+        "navigationBarTitleText": "上报情况详情",
+        "navigationStyle": "default",
+        "backgroundColor": "#F7F2EE",
+        "navigationBarBackgroundColor": "#F7F2EE"
+      }
+    },
+    {
       "path": "pages/detail/detail",
       "style": {
         "navigationStyle": "default",

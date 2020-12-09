@@ -6,7 +6,7 @@ const Cats = require('./services/cats-service')
 const Articles = require('./services/articles-service')
 const Security = require('./services/security-service')
 const Posts = require('./services/posts-service')
-
+const Footprints = require('./services/footprints-service')
 // Api 对象
 const api = {
   users: new Users(),
@@ -14,7 +14,8 @@ const api = {
   cats: new Cats(),
   articles: new Articles(),
   security: new Security(),
-  posts: new Posts()
+  posts: new Posts(),
+  footprints: new Footprints()
 }
 
 // 初始化 cloud
@@ -43,6 +44,7 @@ exports.main = async (event) => {
       await global.db.createCollection('cats').catch(() => null)
       await global.db.createCollection('articles').catch(() => null)
       await global.db.createCollection('posts').catch(() => null)
+      await global.db.createCollection('footprints').catch(() => null)
     } catch (error) {
       console.log(error)
     } finally {

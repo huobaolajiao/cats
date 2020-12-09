@@ -3,6 +3,7 @@
     <scroll-view :scroll-y="true" style="height: 100vh;">
       <loading :show="!isInit" height="100rpx"/>
       <view class="cat-detail" v-if="detail">
+      <button type="default" open-type="getUserInfo" @click="goFootprint">目击投喂/上报纠错</button>
         <!-- 封面 -->
         <view class="item-cover">
           <image mode="aspectFill" :src="detail.cover"/>
@@ -59,8 +60,12 @@ export default class Detail extends Mixins(Share) {
   @Provide()
   isError = false
 
+  @Provide()
+  id?: string
+
   async onLoad (options: any) {
     const { id, title } = options
+    this.id=id
     uni.setNavigationBarTitle({
       title: decodeURIComponent(title)
     })
@@ -78,6 +83,21 @@ export default class Detail extends Mixins(Share) {
     } else {
       this.isError = true
     }
+  }
+/**
+   * 上报目击/投喂情况
+   */
+  goFootprint () {
+    const url = `/pages/add-footprint/add-footprint?id=${this.id}`
+    uni.navigateTo({
+      url,
+      fail: () => {
+        // 已达最大跳转数
+        uni.redirectTo({
+          url
+        })
+      }
+    })
   }
 
   /**

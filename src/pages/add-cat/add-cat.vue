@@ -82,12 +82,10 @@
           </view>
         </view>
       </scroll-view>
-      <!-- 提交蒙版 -->
-      <view v-if="submitStatus" class="submit-modal"/>
+
       <!-- 提交按钮 -->
       <view class="buttons padding">
-        <button class="cu-btn block bg-orange lg" @click="submitCheck" v-if="submitStatus === false">提交初审</button>
-        <button class="cu-btn block bg-orange lg" @click="submitCat" v-if="submitStatus === true">提交管理员审核</button>
+        <button class="cu-btn block bg-orange lg" open-type="getUserInfo" @click="submitCat">上报猫咪</button>
       </view>
       <!-- 头像裁剪 -->
       <image-cropper :path="avtaterTempFilePath" cropperWidth="260" cropperHeight="260" @confirm="avtaterCropperConfirm"/>
@@ -212,7 +210,6 @@ export default class AddCat extends Vue {
 
   async onLoad (options: any) {
     const { id } = options
-
     // 获取猫咪属性列表
     this.attributes = []
     const attributes = await Categories.list({ type: 2 })
@@ -254,6 +251,7 @@ export default class AddCat extends Vue {
     })
   }
 
+  
   /**
    * 初始化数据
    */
@@ -478,25 +476,30 @@ export default class AddCat extends Vue {
   }
 
   /**
-   * 提交初审
+   * 提交初审(用户友好修改为上传)
    */
   async submitCheck () {
     // 表单校验
     if (this.validation()) {
       uni.showLoading({
         mask: true,
-        title: '初审中...'
+        title: '上传中...'
       })
       // 安全检查
       if (await this.securityCheck()) {
         this.submitStatus = true
         uni.showToast({
           icon: 'success',
-          title: '初审通过',
+          title: '上传完成',
           duration: 3000
         })
+      }else{
+        return false
       }
+    }else{
+      return false
     }
+    return true
   }
 
   /**
@@ -551,22 +554,33 @@ export default class AddCat extends Vue {
    * 安全检查
    */
   async securityCheck () {
+    var allTexts = this.name + '，' + this.desc
+    for (const item of this.items){
+      allTexts += '，' + item.category + '，' + item.content
+    }
+
+    if (!await this.contentSecurityCheck(allTexts)){
+      if ((this.name)) {
+        this.showError('名字不合法请修改')
+        return false
+      }
+
+      if (!await this.contentSecurityCheck(this.desc)) {
+        this.showError('描述不合法请修改')
+        return false
+      }
+      await this.itemsSecurityCheck()
+      if (this.checkItems.length !== this.items.length) {
+        return false
+      }
+      
+    }
     const avatarCheckResult = await this.imageSecurityCheck(this.avatar)
     if (avatarCheckResult === false) {
       this.showError('头像不合法请修改')
       return false
     } else if (avatarCheckResult !== true) {
       this.avatar = avatarCheckResult
-    }
-
-    if (!await this.contentSecurityCheck(this.name)) {
-      this.showError('名字不合法请修改')
-      return false
-    }
-
-    if (!await this.contentSecurityCheck(this.desc)) {
-      this.showError('描述不合法请修改')
-      return false
     }
 
     const coverCheckResult = await this.imageSecurityCheck(this.cover)
@@ -577,34 +591,34 @@ export default class AddCat extends Vue {
       this.cover = coverCheckResult
     }
 
-    await this.itemsSecurityCheck()
-    if (this.checkItems.length !== this.items.length) {
-      this.showError('属性不合法请修改')
-      return false
-    }
-
     await this.photosSecurityCheck()
     if (this.checkPhotos.length !== this.photos.length) {
       this.showError('照片不合法请修改')
       return false
     }
-    return true
+     return true
   }
-
-  /**
+ /**
    * 图片安全检查
    */
   async imageSecurityCheck (image: string) {
-    if (image.indexOf('cloud://') !== -1) {
+    if (image.indexOf('cloud://') !== -1 || image.indexOf('http://') !== -1) {
       return true
     } else {
-      const result = await Security.imgSecCheck(image)
+      var result = await Security.imgSecCheck(image)
       if (result.status === 0) {
-        console.log('图片检查合法', image)
+        console.log('图片检查合法', result.url)
         return result.url
       } else {
-        console.log('图片检查不合法', image)
-        return false
+        console.log('图片检查不合法', result.url)
+        result = await Security.imgSecCheck(image)
+        if (result.status === 0) {
+          console.log('图片检查合法', result.url)
+          return result.url
+        } else {
+          console.log('图片检查不合法', result.url)
+          return false
+      }
       }
     }
   }
@@ -663,6 +677,9 @@ export default class AddCat extends Vue {
   async itemSecurityCheck (item: any, index: number) {
     if (await this.contentSecurityCheck(item.category) && await this.contentSecurityCheck(item.content)) {
       this.checkItems.push(item)
+    }else {
+      this.showError(item.category + '：' + item.content + '  不合法请修改')
+      return false
     }
     if (this.items.length > index + 1) {
       await this.itemSecurityCheck(this.items[index + 1], index + 1)
@@ -693,7 +710,8 @@ export default class AddCat extends Vue {
   /**
    * 提交猫咪信息
    */
-  submitCat () {
+  async submitCat () {
+    if (await this.submitCheck() === false) return
     uni.requestSubscribeMessage({
       tmplIds: ['rrPousHxOgv-Lf5vQMry8xa5CjspYVzfYCjXxFA-ZmI'],
       complete: async (result: any) => {

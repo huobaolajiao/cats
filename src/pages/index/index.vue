@@ -38,14 +38,31 @@ export default class Index extends Vue {
     // 云开发实际上不用登录就可以拿到openId，只是为了方便统计用户数量
     uni.login({
       success: async result => {
-        const userInfo = await Users.login({ code: result.code })
+        wx.getSetting({
+          success (res){
+          if (res.authSetting['scope.userInfo']) {
+          // 已经授权，可以直接调用 getUserInfo 获取头像昵称
+          wx.getUserInfo({
+            success: function(res) {
+              wx.setStorageSync('nickName', res.userInfo.nickName);
+              wx.setStorageSync('avatar', res.userInfo.avatarUrl);
+            }
+          })
+          }else{
+            wx.setStorageSync('nickName', '');
+            wx.setStorageSync('avatar', '');
+          }
+        }
+        })
+        console.log({ code: result.code,nickName: wx.getStorageSync('nickName'),avatar: wx.getStorageSync('avatar')})
+        const userInfo = await Users.login({ code: result.code,nickName: wx.getStorageSync('nickName'),avatar: wx.getStorageSync('avatar')})
         if (userInfo === -1) {
           this.isError = true
           return
         }
         this.$store.commit('setUserInfo', userInfo)
 
-        // type 1：品种、2：属性、3：科普
+        // type 1：品种、2：属性、3：科普、4：目击
         // 猫咪品种
         const catTypes = await Categories.list({ type: 1 })
         if (catTypes === -1) {
@@ -72,6 +89,18 @@ export default class Index extends Vue {
           }
         }))
 
+        // 目击类别
+        const FootprintTypes = await Categories.list({ type: 4 })
+        if (FootprintTypes === -1) {
+          this.isError = true
+          return
+        }
+        this.$store.commit('setFootprintTypes', FootprintTypes.map((type: any) => {
+          return {
+            code: type.code,
+            name: type.name
+          }
+        }))
         // 放在这里初始化是为了兼容 部分基础库或设备自定义navbar会有问题
         this.$nextTick(() => {
           // 初始化系统信息

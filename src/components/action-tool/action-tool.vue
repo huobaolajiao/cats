@@ -4,7 +4,7 @@
     <view class="action-tool">
       <view class="tool-button button-circle" :style="{ marginBottom: `${showMore ? 20 : -80}rpx;`, opacity: `${showMore ? 1 : 0};` }"
         v-for="(tool, index) in tools" :key="index"
-        @click="openPage(tool.page)">
+         @click="openPage(tool.page)">
         <view :class="'iconfont icon-' + tool.icon"/>
         <view class="button-title" v-show="showMore">
           {{ tool.title }}
@@ -30,7 +30,8 @@ export default class ActionTool extends Vue {
   // 根据权限展示可用工具
   get tools () {
     const tools: Array<any> = []
-    const level = this.$store.state.userInfo.level
+    var level = this.$store.state.userInfo.level
+    if (level === undefined ){level=0}
     this.$store.state.tools.map((tool: any) => {
       if (tool.levels.some((toolLevel: any) => toolLevel === level)) {
         tools.push(tool)

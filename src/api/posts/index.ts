@@ -7,7 +7,7 @@ export default class PostsService extends BaseService {
   /**
    * 根据openid查询上报列表
    */
-  async list ({ pageIndex, pageSize }: any) {
+  async list({ pageIndex, pageSize }: any) {
     const result: any = await this.callFunction('posts', 'list', { pageIndex, pageSize })
     if (result.code === 0) {
       return result.data.map((post: any) => {
@@ -20,7 +20,7 @@ export default class PostsService extends BaseService {
   /**
    * 上报猫咪
    */
-  async create (data: any) {
+  async create(data: any) {
     const result: any = await this.callFunction('posts', 'create', data)
     if (result.code === 0) {
       return result.data
@@ -31,7 +31,7 @@ export default class PostsService extends BaseService {
   /**
    * 获取上报详情
    */
-  async detail (id: string) {
+  async detail(id: string) {
     const result: any = await this.callFunction('posts', 'detail', { id })
     if (result.code === 0) {
       return this.parseItem(result.data)
@@ -43,7 +43,7 @@ export default class PostsService extends BaseService {
    * 更新猫咪
    * @param data
    */
-  async update (data: any) {
+  async update(data: any) {
     const result: any = await this.callFunction('posts', 'update', data)
     if (result.code === 0) {
       return result.data
@@ -55,7 +55,7 @@ export default class PostsService extends BaseService {
    * 删除文件
    * @param fileId
    */
-  async deleteFile (fileId: string) {
+  async deleteFile(fileId: string) {
     const result: any = await this.callFunction('posts', 'deleteFile', { fileId })
     if (result.code === 0) {
       return result.data
@@ -66,7 +66,7 @@ export default class PostsService extends BaseService {
   /**
    * 获取待审核列表
    */
-  async checkList ({ pageIndex, pageSize }: any) {
+  async checkList({ pageIndex, pageSize }: any) {
     const result: any = await this.callFunction('posts', 'checkList', { pageIndex, pageSize })
     if (result.code === 0) {
       return result.data.map((post: any) => {
@@ -79,7 +79,7 @@ export default class PostsService extends BaseService {
   /**
    * 审核上报的信息
    */
-  async check ({ id, action }: any) {
+  async check({ id, action }: any) {
     const result: any = await this.callFunction('posts', 'check', { id, action })
     if (result.code === 0) {
       return result.data
