@@ -80,7 +80,7 @@
 ## 线上版本
 
 <!-- ![](./doc/images/formal.jpg) -->
-SHOU小流浪图鉴
+SHOU小流浪图鉴  小程序二维码
 <img src="./doc/images/formal.jpg" width="400px"/>
 
 
