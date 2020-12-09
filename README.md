@@ -13,8 +13,7 @@
 * [iconfont](https://www.iconfont.cn/)
 
 ## 项目背景
-[zhiiee](https://github.com/zhiiee/cats)基于北大《燕园猫速查手册》[circle](https://github.com/SCCAPKU/miniprogram)开发了2.0版本
-[huobaolajiao](https://github.com/huobaolajiao/cats)本项目基于[zhiiee](https://github.com/zhiiee/cats)走回校园，走进了上海海洋大学SHOU小流浪后援会（动保），持续开发3.0版本，目前已新增1200行代码，根据`GPL-3.0`依法开源
+[zhiiee](https://github.com/zhiiee/cats)基于北大《燕园猫速查手册》[circle](https://github.com/SCCAPKU/miniprogram)开发了2.0版本，本项目[huobaolajiao](https://github.com/huobaolajiao/cats)基于[zhiiee](https://github.com/zhiiee/cats)走回校园，走进了上海海洋大学SHOU小流浪后援会（动保），持续开发3.0版本，目前已新增1200行代码，根据`GPL-3.0`依法开源
 
 ## 功能模块
 
